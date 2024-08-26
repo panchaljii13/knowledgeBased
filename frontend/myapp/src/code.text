@@ -1,0 +1,151 @@
+
+// Addd article and delete update
+
+
+
+import React, { useState } from "react";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'bootstrap-css-only/css/bootstrap.min.css';
+import 'mdbreact/dist/css/mdb.css';
+import "../Content/Contents.css";
+
+const Content = () => {
+    const [articles, setArticles] = useState([]);
+    const [newArticle, setNewArticle] = useState({ title: '', content: '', image: '' });
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [showComments, setShowComments] = useState(true); // Toggle comments visibility
+
+    const handleArticleChange = (e) => {
+        const { name, value } = e.target;
+        setNewArticle({ ...newArticle, [name]: value });
+    };
+
+    const handleArticleSubmit = (e) => {
+        e.preventDefault();
+        const currentDateTime = new Date().toLocaleString();
+
+        if (editingIndex !== null) {
+            const updatedArticles = articles.map((article, index) =>
+                index === editingIndex
+                    ? { ...article, ...newArticle, date: currentDateTime }
+                    : article
+            );
+            setArticles(updatedArticles);
+            setEditingIndex(null);
+        } else {
+            setArticles([
+                ...articles,
+                { ...newArticle, date: currentDateTime }
+            ]);
+        }
+        setNewArticle({ title: '', content: '', image: '' });
+    };
+
+    const handleEdit = (index) => {
+        setNewArticle({
+            title: articles[index].title,
+            content: articles[index].content,
+            image: articles[index].image
+        });
+        setEditingIndex(index);
+    };
+
+    const handleDelete = (index) => {
+        setArticles(articles.filter((_, i) => i !== index));
+    };
+
+    return (
+        <div id="contentbg">
+            <div className="container-xxl py-5">
+                <div className="container">
+                    <div className="row g-5">
+                        <div className="col-lg-12">
+                            <h1 className="mb-4" id="Title">Article Management</h1>
+
+                            {/* Add/Edit Article Form */}
+                            <form onSubmit={handleArticleSubmit} className="mb-4">
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        name="title"
+                                        value={newArticle.title}
+                                        onChange={handleArticleChange}
+                                        placeholder="Title"
+                                        required
+                                    />
+                                    <textarea
+                                        className="form-control mb-2"
+                                        name="content"
+                                        rows="3"
+                                        value={newArticle.content}
+                                        onChange={handleArticleChange}
+                                        placeholder="Content"
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        name="image"
+                                        value={newArticle.image}
+                                        onChange={handleArticleChange}
+                                        placeholder="Image URL"
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary">
+                                    {editingIndex !== null ? 'Update Article' : 'Add Article'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary ms-2"
+                                    onClick={() => setEditingIndex(null)}
+                                >
+                                    Cancel
+                                </button>
+                            </form>
+
+                            {/* Articles List */}
+                            <div className="list-group">
+                                {articles.length > 0 ? (
+                                    articles.map((article, index) => (
+                                        <div key={index} className="list-group-item">
+                                            {article.image && (
+                                                <img
+                                                    src={article.image}
+                                                    alt="Article"
+                                                    className="img-fluid rounded mb-2"
+                                                    style={{ maxHeight: '200px', objectFit: 'cover' }}
+                                                />
+                                            )}
+                                            <h5 className="mb-1">{article.title}</h5>
+                                            <p className="mb-1">{article.content}</p>
+                                            <small className="text-muted">Added on: {article.date}</small>
+                                            <div className="mt-2">
+                                                <button
+                                                    className="btn btn-warning btn-sm me-2"
+                                                    onClick={() => handleEdit(index)}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={() => handleDelete(index)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-muted">No articles yet.</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Content;

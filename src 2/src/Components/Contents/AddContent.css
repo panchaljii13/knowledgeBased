@@ -1,0 +1,26 @@
+.container-xxl {
+    background-color: #f8f9fa;
+    padding: 2rem;
+}
+
+.h1article{
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.formcontrocontent {
+    margin-bottom: 1rem;
+}
+
+.list-group-item {
+    background-color: #fff;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+#articleimg.img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+}

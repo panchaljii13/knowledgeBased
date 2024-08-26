@@ -1,0 +1,122 @@
+/* #profailicone{
+    position: relative;
+    right: 3rem;
+    
+}
+#deshbord li a{
+    width: 13rem;
+    position: relative;
+    left:8rem;
+    font-size: large;
+}
+
+
+   #searchbar{
+    display:flex;
+    align-items:center ;
+    position: absolute;
+    left:75rem   
+}
+@media screen and (min-width: 360px) {
+    #searchbar {
+      display:flex;
+    align-items:center ;
+    position: absolute;
+    left:15rem   
+    }
+  }
+#search-button{
+    position: relative;
+}
+   .dropdown{
+    margin: 1rem;
+   }
+ */
+
+
+
+   /* _____________________________ */
+   /* Header.css */
+   body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #f8f9fa;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+}
+
+.sidebar .nav-link {
+    color: #000;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    top: 10px;
+    left: 180px;
+    z-index: 1001;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 1rem;
+    transition: margin-left 0.3s ease;
+}
+
+.content-expanded {
+    margin-left: 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Adjust width for smaller screens if needed */
+    }
+
+    .content {
+        margin-left: 0;
+    }
+    .sidebar-toggle {
+        position: fixed;
+        top: 5px;
+        left: 290px;
+        z-index: 1001;
+    }
+}
+#addarticle{
+    font-size: larger;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+#logout{
+    font-size: larger;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+}
