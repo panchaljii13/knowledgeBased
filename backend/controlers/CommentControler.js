@@ -1,6 +1,8 @@
 import Comment from "../modle/Commentmodle.js";
 import User from "../modle/UserModle.js";
 import Article from "../modle/Articlemodle.js";
+
+// AddFeedback
 export const AddFeedback = async (req, res) => {
   const { feedback, UserID, ArticleID } = req.body;
 
@@ -31,7 +33,7 @@ export const AddFeedback = async (req, res) => {
       res.status(500).json({ error: 'Error adding feedback. Please try again.' });
   }
 };
-
+// UpdateFeedback
 export const UpdateFeedback = async (req,res) => {
     const { FeedbackID, ...updateData } = req.body;
     try{
@@ -51,7 +53,7 @@ export const UpdateFeedback = async (req,res) => {
           res.status(400).json({ error: error.message });
         }
 }
-
+// DeleteFeedback
 export const DeleteFeedback = async (req,res) => {
     const { FeedbackID } = req.body;
     console.log(FeedbackID)
@@ -75,6 +77,7 @@ export const DeleteFeedback = async (req,res) => {
         res.status(400).json({ error: error.message });
     }
 }
+// viewallFeedback
 export const viewallFeedback = async (req, res) => {
     try {
       // Fetch all comments with associated User and Article

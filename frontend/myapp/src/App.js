@@ -7,6 +7,7 @@ import Header from  "./Components/Header/Header.js";
 import Content from "./Components/Content/Contents.js"
 import Home from './Components/HomeComponents/Home.js';
 import AddContent from "./Components/Content/AddContent.js"
+import UpdateContent from './Components/Content/UpdateContens.js';
 // import "./Components/HomePage.css";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/header" element={<Header />} />
         <Route path="/content" element={<Content />} />
         <Route path="/addContent" element={<AddContent />} />
+        <Route path='/updateContent' element={<UpdateContent/>}/>
         {/* Add other routes as needed */}
     </Routes>
 </Router>

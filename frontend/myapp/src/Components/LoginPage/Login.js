@@ -29,7 +29,7 @@ const Login = () => {
         setLoginError(""); // Clear errors on switch
     };
 
-    const handleSignUpSubmit = async (event) => {
+    const handleSignUpSubmit = (event) => {
         event.preventDefault();
         // Basic validation
         if (!name || !email || !password) {
@@ -45,35 +45,34 @@ const Login = () => {
             return;
         }
 
-        try {
-            const response =  await axios.post("http://localhost:8080/user/signup", {
-                name,
-                email,
-                password
-            });
-            console.log("response",response)
-            alert("Sign up successful",response);
-            setName("");
-            setEmail("");
-            setPassword("");
+        axios.post("http://localhost:8080/user/signup", {
+            name,
+            email,
+            password
+        })
+        .then(response => {
+            
+            console.log("response", response.data);
             if (response.data.success) {
-                console.log("response",response);
-
                 const { userID } = response.data; // Assume this comes from your backend
                 sessionStorage.setItem('UserID', userID); // Store UserID in sessionStorage
-                // Redirect to another page or update state as needed
-                console.log('Login successful ----, UserID:', userID);
+                alert("Sign up successful");
+                
+                setEmail("");
+                setPassword("");
+                setName("");
+                
             } else {
-                // Handle login failure
-                console.error('Login failed:', response.data.message);
+                setSignUpError(response.data.message || "Sign up failed. Please try again.");
             }
-
-        } catch (error) {
+        })
+        .catch(error => {
+            console.error('Error signing up:', error);
             setSignUpError("Error signing up or user already exists. Please try again.");
-        }
+        });
     };
 
-    const handleLoginSubmit = async (event) => {
+    const handleLoginSubmit = (event) => {
         event.preventDefault();
 
         if (!loginEmail || !loginPassword) {
@@ -89,24 +88,29 @@ const Login = () => {
             return;
         }
 
-        try {
-            const response = await axios.post("http://localhost:8080/user/login", {
-                email: loginEmail,
-                password: loginPassword
-            });
-
-            // set user data in session storage
-           const userJsObject = sessionStorage.setItem('user', JSON.stringify(response.data.user));
-
-
+        axios.post("http://localhost:8080/user/login", {
+            email: loginEmail,
+            password: loginPassword
+        })
+        .then(response => {
+            // if(response.status==200){
+            console.log(response.data)
+            sessionStorage.setItem('user', JSON.stringify(response.data.user));
             localStorage.setItem('token', response.data.token); // Store JWT token
             alert("Login successful");
             setLoginEmail("");
             setLoginPassword("");
             navigate("/home");
-        } catch (error) {
+
+            // }
+            // else{
+            //     alert("someting went wrong")
+            // }
+        })
+        .catch(error => {
+            console.error('Error logging in:', error);
             setLoginError("Error logging in. Please check your credentials.");
-        }
+        });
     };
 
     return (
@@ -189,7 +193,6 @@ const Login = () => {
                                                 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                                                 
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -197,7 +200,6 @@ const Login = () => {
                     </div>
                 </div>
             </section>
-            
         </div>
     );
 };

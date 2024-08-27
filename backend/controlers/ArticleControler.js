@@ -5,6 +5,7 @@ import Comment from "../modle/Commentmodle.js";
 
 export const AddArticle = async (req, res) => {
   const { title, content, UserID, CategoryID } = req.body;
+  console.log(title,content,UserID,CategoryID);
   const files = req.files;
 
   console.log('Files:', files); // Debugging line
@@ -18,7 +19,7 @@ export const AddArticle = async (req, res) => {
       // Process image file paths
       const imagePaths = files ? files.map(file => file.path) : []; // Safely handle files
       console.log("imagePath",imagePaths)
-
+      
       // Create the article with image paths
       const newArticle = await Article.create({
           title,
@@ -40,25 +41,34 @@ export const AddArticle = async (req, res) => {
   }
 };
 
-export const UpdateArticle = async (req,res) => {
-    const { ArticleID, ...updateData } = req.body;
-    try{
-        const article = await Article.findOne({ where: { ArticleID } });
-        if (article) {
-            await article.update(updateData);
-            res.status(201).json({
-                success: true,
-                message: 'article Update successfully',
-                data: article
-            });
-          } else {
-            res.status(404).json({ error: 'article not found' });
-          }
-        } catch (error) {
-            console.log(error);
-          res.status(400).json({ error: error.message });
-        }
-}
+export const UpdateArticle = async (req, res) => {
+  const { title, content, ArticleID, CategoryID } = req.body;
+
+  try {
+      console.log('Received data:', { title, content, ArticleID, CategoryID });
+      
+      const article = await Article.findByPk(ArticleID);
+
+      console.log('Found article:', article);
+      
+      if (!article) {
+          return res.status(404).json({ error: 'Article not found' });
+      }
+
+      article.title = title;
+      article.content = content;
+      article.CategoryID = CategoryID;
+      await article.save();
+
+      res.status(200).json({ success: true, data: article });
+  } catch (error) {
+      console.error('Error updating article:', error);
+      res.status(500).json({ error: 'Error updating article' });
+  }
+};
+
+
+
 
 export const DeleteArticle = async (req,res) => {
     const { ArticleID } = req.body;

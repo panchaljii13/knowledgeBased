@@ -12,11 +12,11 @@ export const Article = sequelize.define('Article', {
     primaryKey: true,
   },
   title: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   content: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   UserID: {
@@ -38,7 +38,7 @@ export const Article = sequelize.define('Article', {
     onUpdate: 'CASCADE',
   },
   AddImages: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // Array of image paths
+    type: DataTypes.JSON(DataTypes.STRING), // Array of image paths
     allowNull: true,
     defaultValue: [] // Default to an empty array if no images are provided
 },

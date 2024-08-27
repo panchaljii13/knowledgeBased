@@ -3,12 +3,12 @@ import User from '../modle/UserModle.js'
 import jwt from 'jsonwebtoken';
 import Article from '../modle/Articlemodle.js';
 import Category from '../modle/Categorymodle.js';
-const secretKey = "secretKey";
+// const secretKey = "secretKey";
 
-   
+// UserSignUp
 export const UserSignUp = async (req, res) => {
     const { name, email, password } = req.body;
-
+    console.log(req.body)
     try {
         const existingUser = await User.findOne({ where: { email } }); 
         if (existingUser) {
@@ -17,38 +17,32 @@ export const UserSignUp = async (req, res) => {
 
       
         const user = await User.create({ name, email, password });
-       const token= jwt.sign({user},secretKey, {expiresIn: "2hr"},(err,token)=>{
-            
-        res.status(201).json({
-            success: true,
-            message: 'User created successfully',
-            data: user,
-            token:token
-        });
-    });
-      
+//  jwt token
+        const secretKey = "asdhfakhw2leh"
+        const payload  ={email:req.body.email};
+       const token= jwt.sign(payload,secretKey, {expiresIn: "2hr"})
+        return res.status(200).json({message:"Sing in successfully.. ",token,user})
     } catch (err) {
         console.error( err); 
         res.status(500).json({ error: 'Error signing up. Please try again.' });
     }
 };
 
-
+// UserLogin
 export const UserLogin = async (request, response, next) => {
     try {
         const user = await User.findOne({ where: { email: request.body.email } });
-
+         console.log();
+         
         if (!user) {
-            return response.status(201).json({ Message: 'Invalid email' });
+            return response.status(401).json({ Message: 'Invalid email' });
         }
-
         const isPasswordValid = User.checkPassword(request.body.password, user.password);
         if (isPasswordValid) {
-            const token = jwt.sign({ email: user.email, id: user.id }, 'userToken');
-            return response.status(200).json({ Message: 'SignIn successfully...', user, token });
+            // const token = jwt.sign({ email: user.email, id: user.id }, 'userToken');
+            return response.status(200).json({ Message: 'SignIn successfully...', user });
         }
-
-        return response.status(201).json({ Message: 'Invalid password' });
+        return response.status(401).json({ Message: 'Invalid password' });
     } catch (error) {
         console.log(error);
         return response.status(500).json({ Error: 'Internal server error' });
@@ -57,6 +51,7 @@ export const UserLogin = async (request, response, next) => {
 
 
 
+// UpdateUser
 export const UpdateUser = async (req,res) => {
     const { email, ...updateData } = req.body;
     try{
@@ -72,7 +67,7 @@ export const UpdateUser = async (req,res) => {
           res.status(400).json({ error: error.message });
         }
 }
-
+// UserDelete
 export const UserDelete = async (req,res) => {
     const { email } = req.body;
     console.log(email)
@@ -97,28 +92,9 @@ export const UserDelete = async (req,res) => {
     }
 }
 
-// export const searchByCategory = (request, response, next) => {
-//     let role = request.body.searchedList;
+// GetArticleUserByid
 
-//     Category.findAll({
-//         where: { role: { [Op.like]: `${role}%` } },
-//         include: [{
-//             model: SubCategory,
-//             include: [{
-//                 model: Player,
-//             }]
-//         }]
-//     })
-//         .then(result => {
-//             return response.status(200).json({ Message: "Player data by searching", data: result });
-//         })
-//         .catch(error => {
-//             console.log(error);
-//             return response.status(500).json({ Error: "Internal server error...." });
-//         });
-// }
-
-export const GetUserByid = async (req, res) => {
+export const GetArticleUserByid = async (req, res) => {
     const UserID  = req.body.UserID; // Get UserID from URL parameters
     console.log(req.body)
     try {

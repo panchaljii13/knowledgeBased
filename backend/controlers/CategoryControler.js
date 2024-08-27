@@ -1,4 +1,6 @@
 import Category from "../modle/Categorymodle.js";
+
+// AddCategory
 export const AddCategory = async (req, res) => {
     const {  categoryname } = req.body; 
     try {
@@ -24,7 +26,7 @@ export const AddCategory = async (req, res) => {
         res.status(500).json({ error: 'Error add Category. Please try again.' });
     }
 };
-
+// UpdateCategory
 export const UpdateCategory = async (req,res) => {
     const { CategoryID, ...updateData } = req.body;
     try{
@@ -44,7 +46,7 @@ export const UpdateCategory = async (req,res) => {
           res.status(400).json({ error: error.message });
         }
 }
-
+// DeleteCategory
 export const DeleteCategory = async (req,res) => {
     const { CategoryID } = req.body;
     console.log(CategoryID)
@@ -68,6 +70,7 @@ export const DeleteCategory = async (req,res) => {
         res.status(400).json({ error: error.message });
     }
 }
+// viewallCategory
 export const viewallCategory = async (req, res) => {
     try {
         // Fetch all categories from the database
