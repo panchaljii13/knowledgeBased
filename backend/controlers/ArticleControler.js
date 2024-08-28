@@ -5,39 +5,42 @@ import Comment from "../modle/Commentmodle.js";
 
 export const AddArticle = async (req, res) => {
   const { title, content, UserID, CategoryID } = req.body;
-  console.log(title,content,UserID,CategoryID);
-  const files = req.files;
-
-  console.log('Files:', files); // Debugging line
+  const files = req.files; // Multer should handle file uploads and populate req.files
 
   try {
-      // Validate required fields
-      if (!title || !content || !UserID || !CategoryID) {
-          return res.status(400).json({ error: 'Missing required fields' });
-      }
+    // Validate required fields
+    if (!title || !content || !UserID || !CategoryID) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
-      // Process image file paths
-      const imagePaths = files ? files.map(file => file.path) : []; // Safely handle files
-      console.log("imagePath",imagePaths)
-      
-      // Create the article with image paths
-      const newArticle = await Article.create({
-          title,
-          content,
-          UserID,
-          CategoryID,
-          AddImages: imagePaths // Store paths in the database
-      });
+    // Process image file paths
+    const imagePaths = files ? files.map(file => file.path) : [];
 
-      res.status(201).json({
-          success: true,
-          message: 'Article created successfully',
-          data: newArticle
-      });
+    // Create the article with image paths
+    const newArticle = await Article.create({
+      title,
+      content,
+      UserID,
+      CategoryID,
+      AddImages: imagePaths // Store paths in the database
+    });
+
+    // Return success response
+    res.status(201).json({
+      success: true,
+      message: 'Article created successfully',
+      data: newArticle
+    });
 
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error adding article. Please try again.' });
+    console.error('Error creating article:', err);
+
+    // Return error response
+    res.status(500).json({
+      success: false,
+      error: 'Error adding article. Please try again.',
+      details: err.message // Provide error details for debugging
+    });
   }
 };
 

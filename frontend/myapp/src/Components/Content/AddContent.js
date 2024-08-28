@@ -50,7 +50,7 @@ const Content = () => {
             setArticles([...articles, newArticle]);
             setNewArticle({ title: '', content: '', AddImages: null, CategoryID: null });
             setPreviewImage(null);
-
+console.log("newArticle----------------------------------------------",newArticle);
             // Prepare FormData for file upload
             const formData = new FormData();
             formData.append('title', newArticle.title);

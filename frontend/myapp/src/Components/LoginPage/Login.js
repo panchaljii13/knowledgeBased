@@ -28,7 +28,7 @@ const Login = () => {
         setIsSignUp(false);
         setLoginError(""); // Clear errors on switch
     };
-
+// SignUp handle
     const handleSignUpSubmit = (event) => {
         event.preventDefault();
         // Basic validation
@@ -53,18 +53,17 @@ const Login = () => {
         .then(response => {
             
             console.log("response", response.data);
-            if (response.data.success) {
+          
                 const { userID } = response.data; // Assume this comes from your backend
                 sessionStorage.setItem('UserID', userID); // Store UserID in sessionStorage
-                alert("Sign up successful");
-                
+                alert("Sign up successful----------------");
                 setEmail("");
                 setPassword("");
                 setName("");
+                handleSignInClick();
+
                 
-            } else {
-                setSignUpError(response.data.message || "Sign up failed. Please try again.");
-            }
+        
         })
         .catch(error => {
             console.error('Error signing up:', error);
@@ -126,7 +125,7 @@ const Login = () => {
                                             <div className="text-center">
                                                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
                                                     style={{ width: '185px' }} alt="logo" />
-                                                <h4 className="mt-1 mb-5 pb-1">We are The Lotus Team</h4>
+                                                <h4 className="mt-1 mb-5 pb-1">We are The Softude Team</h4>
                                             </div>
 
                                             <form onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}>

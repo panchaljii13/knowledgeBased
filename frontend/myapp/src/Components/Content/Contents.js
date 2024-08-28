@@ -81,6 +81,8 @@ const Content = () => {
             } catch (error) {
                 console.log('Error fetching articles:', error);
             }
+            console.log("aerticle[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]");
+
         };
         getArticles();
     }, []);
@@ -140,39 +142,7 @@ const Content = () => {
         navigate('/updateContent', { state: { article } })
     };
 
-    // const handleUpdateSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (!updatedTitle || !updatedContent) {
-    //         alert("Title and content are required.");
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.put(`http://localhost:8080/api/article/update/${selectedArticle.ArticleID}`, {
-    //             title: updatedTitle,
-    //             content: updatedContent
-    //         });
-
-    //         const updatedArticle = response.data.data;
-
-    //         setArticleList(prevList =>
-    //             prevList.map(article =>
-    //                 article.ArticleID === updatedArticle.ArticleID ? updatedArticle : article
-    //             )
-    //         );
-
-    //         setEditMode(false);
-    //         setSelectedArticle(null);
-    //         setUpdatedTitle('');
-    //         setUpdatedContent('');
-    //         alert('Article updated successfully');
-    //     } catch (error) {
-    //         console.error('Error updating article:', error);
-    //         alert('Failed to update article');
-    //     }
-    // };
-    // console.log(articleList);
-
+   
 
     return (
         <div id="contentbg">
@@ -182,14 +152,37 @@ const Content = () => {
                         {articleList.map((article, index) => (
                             <div key={index} className="col-12 mb-4">
                                 <div className="row">
+                                <img
+                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                                    className="profileimg"
+                                    height="25"
+                                    alt="Profile"
+                                    loading="lazy"
+                                />
+                                    <h1>
+                                    {article.user ? article.user.name : 'Unknown Category'}
+
+                                    </h1>
                                     {/* Image section */}
+                                    
                                     <div className="col-md-6 col-12 mb-4">
-                                        <img
-                                            className="img-fluid rounded w-100"
-                                            src={"OIP1.png"} // Use article.image if available, otherwise default image
-                                            alt={`Article Image ${index + 1}`}
-                                        />
-                                    </div>
+                  {Array.isArray(article.AddImages) && article.AddImages.length > 0 ? (
+                    article.AddImages.map((imageUrl, imageIndex) => (
+                      <img
+                        key={imageIndex}
+                        className="img-fluid rounded w-100"
+                        src={`http://localhost:8080/${imageUrl}`} // Adjust URL as needed
+                        alt={`Article Image ${imageIndex + 1}`}
+                      />
+                    ))
+                  ) : (
+                    <img
+                      className="img-fluid rounded w-100"
+                      src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                      alt="Default Image"
+                    />
+                  )}
+                </div>
                                     {/* Content section */}
                                   <div className="col-md-6 col-12">
                                 <div className="d-flex flex-column">
@@ -197,6 +190,7 @@ const Content = () => {
                                     <h1 className="mb-4" id="Category">
                                         {article.category ? article.category.categoryname : 'Unknown Category'}
                                     </h1> {/* Display category name */}
+                                    <h2>{article.title}</h2>
                                     <p id="Article">{article.content}</p>
                                             <div className="d-flex align-items-center mb-4">
                                                 {/* Like button */}

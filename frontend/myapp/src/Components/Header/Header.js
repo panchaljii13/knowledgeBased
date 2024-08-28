@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import "./Header.css"; // Make sure this includes styles for the sidebar
+import axios from 'axios';
+import "./Header.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
@@ -9,9 +10,10 @@ const Header = () => {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
 
     const handleLogout = () => {
-        sessionStorage.clear()
+        sessionStorage.clear();
         navigate("/Login");
     };
 
@@ -22,14 +24,23 @@ const Header = () => {
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value);
     };
+
     const addarticleandfile = () =>{
         navigate("/addContent");
     }
 
-    const handleSearch = () => {
-        alert(searchInput);
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/search/searchall', {
+                params: { query: searchInput }
+            });
+            setSearchResults(response.data.data);
+            // navigate()
+        } catch (err) {
+            console.error('Error searching:', err);
+        }
     };
-    
+
     return (
         <div className="d-flex">
             {/* Sidebar */}
@@ -50,6 +61,7 @@ const Header = () => {
                         />
                     </a>
                     <ul className="nav flex-column">
+                        {/* Navigation Items */}
                         <li className="nav-item">
                             <a className="nav-link" href="#">News</a>
                         </li>
@@ -72,7 +84,6 @@ const Header = () => {
                             <a className="nav-link" href="#" id="logout" onClick={handleLogout}>Logout</a>
                         </li>
                     </ul>
-                    {/* <button onClick={navigate(hendlearticlepaage)}> Add Article </button> */}
 
                     <div className="d-flex flex-column align-items-center mt-4">
                         <input
@@ -88,47 +99,21 @@ const Header = () => {
                         >
                             <i className="fas fa-search"></i>
                         </button>
-                        <div className="dropdown">
-                            <a
-                                className="text-reset dropdown-toggle"
-                                href="#"
-                                role="button"
-                                id="notificationsDropdown"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <i className="fas fa-bell"></i>
-                                <span className="badge rounded-pill badge-notification bg-danger">1</span>
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="notificationsDropdown">
-                                <li><a className="dropdown-item" href="#">Some news</a></li>
-                                <li><a className="dropdown-item" href="#">Another news</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
+                        {/* Handle search results display */}
+                        <div className="search-results mt-3">
+                            {searchResults.length > 0 ? (
+                                <ul className="list-group">
+                                    {searchResults.map((result, index) => (
+                                        <li key={index} className="list-group-item">
+                                            {result.content}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No results found</p>
+                            )}
                         </div>
-                        <div className="dropdown mt-3">
-                            <a
-                                className="dropdown-toggle d-flex align-items-center"
-                                href="#"
-                                role="button"
-                                id="profileDropdown"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <img
-                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                                    className="rounded-circle"
-                                    height="25"
-                                    alt="Profile"
-                                    loading="lazy"
-                                />
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a className="dropdown-item" href="#">My profile</a></li>
-                                <li><a className="dropdown-item" href="#">Settings</a></li>
-                                <li><a className="dropdown-item" href="#" onClick={handleLogout}>Logout</a></li>
-                            </ul>
-                        </div>
+                        {/* Other components */}
                     </div>
                 </div>
             </nav>
@@ -142,7 +127,6 @@ const Header = () => {
                     <i className="fas fa-bars"></i> Menu
                 </button>
                 {/* Your main content goes here */}
-                {/* <h1>.............................................Welcome to the Home Page.............................................</h1> */}
             </div>
         </div>
     );

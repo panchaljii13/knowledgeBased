@@ -24,6 +24,7 @@ export const Article = sequelize.define('Article', {
     references: {
       model: 'User',  // Ensure this matches the actual model name (case-sensitive)
       key: 'UserID',
+      attributes: ['UserName']
     },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -38,7 +39,7 @@ export const Article = sequelize.define('Article', {
     onUpdate: 'CASCADE',
   },
   AddImages: {
-    type: DataTypes.JSON(DataTypes.STRING), // Array of image paths
+    type: DataTypes.JSON, // Array of image paths
     allowNull: true,
     defaultValue: [] // Default to an empty array if no images are provided
 },
