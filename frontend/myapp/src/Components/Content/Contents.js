@@ -185,7 +185,7 @@ const Content = () => {
                 </div>
                                     {/* Content section */}
                                   <div className="col-md-6 col-12">
-                                <div className="d-flex flex-column">
+                                    <div className="d-flex flex-column">
                                     <p className="d-inline-block py-1 px-1" id="Categoryfont">Category</p>
                                     <h1 className="mb-4" id="Category">
                                         {article.category ? article.category.categoryname : 'Unknown Category'}

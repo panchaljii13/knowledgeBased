@@ -131,21 +131,21 @@ const Login = () => {
                                             <form onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}>
                                                 {isSignUp ? (
                                                     <>
-                                                        <p>Please create an account</p>
-                                                        <div className="form-outline mb-4">
-                                                            <input type="text" id="formName" className="form-control"
+                                                        <p id="fromnamesize">Please create an account</p>
+                                                        <div className="form-outline mb-4" id="fromnamesize">
+                                                            <input type="text" id="fromnamesize" className="form-control"
                                                                 placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
                                                             <label className="form-label" htmlFor="formName">Name</label>
                                                         </div>
 
-                                                        <div className="form-outline mb-4">
-                                                            <input type="email" id="formEmail" className="form-control"
+                                                        <div className="form-outline mb-4" id="fromnamesize">
+                                                            <input type="email" id="fromnamesize" className="form-control" 
                                                                 placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
                                                             <label className="form-label" htmlFor="formEmail">Email</label>
                                                         </div>
 
-                                                        <div className="form-outline mb-4">
-                                                            <input type="password" id="formPassword" className="form-control"
+                                                        <div className="form-outline mb-4" id="fromnamesize">
+                                                            <input type="password" id="fromnamesize" className="form-control"
                                                                 placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                                             <label className="form-label" htmlFor="formPassword">Password</label>
                                                         </div>
@@ -154,15 +154,15 @@ const Login = () => {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <p>Please login to your account</p>
-                                                        <div className="form-outline mb-4">
-                                                            <input type="email" id="formLoginEmail" className="form-control"
+                                                        <p id="fromnamesize">Please login to your account</p>
+                                                        <div className="form-outline mb-4" id="fromnamesize">
+                                                            <input type="email" id="fromnamesize" className="form-control"
                                                                 placeholder="Email address" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
                                                             <label className="form-label" htmlFor="formLoginEmail">Email</label>
                                                         </div>
 
-                                                        <div className="form-outline mb-4">
-                                                            <input type="password" id="formLoginPassword" className="form-control"
+                                                        <div className="form-outline mb-4"  id="fromnamesize">
+                                                            <input type="password" id="fromnamesize" className="form-control"
                                                                 placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
                                                             <label className="form-label" htmlFor="formLoginPassword">Password</label>
                                                         </div>
@@ -172,13 +172,13 @@ const Login = () => {
                                                 )}
 
                                                 <div className="text-center pt-1 mb-5 pb-1">
-                                                    <button type="submit" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3">
+                                                    <button type="submit" id="fromnamesize" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3">
                                                         {isSignUp ? 'Sign Up' : 'Log In'}
                                                     </button>
                                                     {!isSignUp ? (
-                                                        <a className="text-muted" href="#!" onClick={handleSignUpClick}>Don't have an account? Create new</a>
+                                                        <a className="text-muted"id="fromnamesize" href="#!" onClick={handleSignUpClick}>Don't have an account? Create new</a>
                                                     ) : (
-                                                        <a className="text-muted" href="#!" onClick={handleSignInClick}>Already have an account? Log In</a>
+                                                        <a className="text-muted"id="fromnamesize" href="#!" onClick={handleSignInClick}>Already have an account? Log In</a>
                                                     )}
                                                 </div>
                                             </form>

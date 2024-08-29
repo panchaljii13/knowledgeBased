@@ -21,25 +21,32 @@ const Header = () => {
         setSidebarOpen(prevState => !prevState);
     };
 
-    const handleSearchChange = (e) => {
-        setSearchInput(e.target.value);
-    };
+    // const handleSearchChange = (e) => {
+    //     setSearchInput(e.target.value);
+    // };
 
     const addarticleandfile = () =>{
         navigate("/addContent");
     }
 
-    const handleSearch = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/search/searchall', {
-                params: { query: searchInput }
-            });
-            setSearchResults(response.data.data);
-            // navigate()
-        } catch (err) {
-            console.error('Error searching:', err);
-        }
+    const handleSearch =  () => {
+                
+        navigate("/searchdata");
+
+        // try {
+        //     const response = await axios.get('http://localhost:8080/search/searchall', {
+        //         params: { query: searchInput }
+        //     });
+        //     setSearchResults(response.data.data);
+        //     navigate("/searchdata");
+        // } catch (err) {
+        //     console.error('Error searching:', err);
+        // }
+        
     };
+    const ShowMyArticle = () =>{
+        navigate("/myarticle")
+    }
 
     return (
         <div className="d-flex">
@@ -75,7 +82,7 @@ const Header = () => {
                             <a className="nav-link" href="#">Health</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">World</a>
+                            <a className="nav-link" href="#" onClick={ShowMyArticle}>My Article</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="#" id="addarticle" onClick={addarticleandfile}>Add Your Article</a>
@@ -86,33 +93,33 @@ const Header = () => {
                     </ul>
 
                     <div className="d-flex flex-column align-items-center mt-4">
-                        <input
+                        {/* <input
                             type="text"
                             className="form-control mb-3"
                             placeholder="Search"
                             value={searchInput}
                             onChange={handleSearchChange}
-                        />
+                        /> */}
                         <button
                             className="btn btn-outline-primary mb-2"
                             onClick={handleSearch}
                         >
-                            <i className="fas fa-search"></i>
+                            <i className="fas fa-search">    Search   </i>
                         </button>
                         {/* Handle search results display */}
-                        <div className="search-results mt-3">
+                        {/* <div className="search-results mt-3">
                             {searchResults.length > 0 ? (
                                 <ul className="list-group">
                                     {searchResults.map((result, index) => (
                                         <li key={index} className="list-group-item">
-                                            {result.content}
+                                            {result.title}
                                         </li>
                                     ))}
                                 </ul>
                             ) : (
                                 <p>No results found</p>
                             )}
-                        </div>
+                        </div> */}
                         {/* Other components */}
                     </div>
                 </div>

@@ -7,6 +7,6 @@ router.post('/signup',UserSignUp);
 router.post("/login",UserLogin);
 router.put("/update",UpdateUser);
 router.delete("/delete",UserDelete);
-router.post("/getuserbyid",GetArticleUserByid);
+router.post("/getarticlebyuserid",GetArticleUserByid);
 
 export default router;
