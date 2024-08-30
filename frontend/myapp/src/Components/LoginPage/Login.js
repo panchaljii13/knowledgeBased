@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import "./Loginpage.css";
 
 const Login = () => {
+        // Add state variables for signup
+
     const [isSignUp, setIsSignUp] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -28,6 +30,7 @@ const Login = () => {
         setIsSignUp(false);
         setLoginError(""); // Clear errors on switch
     };
+
 // SignUp handle
     const handleSignUpSubmit = (event) => {
         event.preventDefault();
@@ -44,8 +47,8 @@ const Login = () => {
             setSignUpError("Password must be at least 6 characters long.");
             return;
         }
-
-        axios.post("http://localhost:8080/user/signup", {
+        // user  signup api call
+        axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_ADD_USER}`, {
             name,
             email,
             password
@@ -70,7 +73,7 @@ const Login = () => {
             setSignUpError("Error signing up or user already exists. Please try again.");
         });
     };
-
+    // handleLoginSubmit  login 
     const handleLoginSubmit = (event) => {
         event.preventDefault();
 
@@ -86,8 +89,8 @@ const Login = () => {
             setLoginError("Password must be at least 6 characters long.");
             return;
         }
-
-        axios.post("http://localhost:8080/user/login", {
+    //    Login user api call
+        axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_LOGIN_USER}`, {
             email: loginEmail,
             password: loginPassword
         })

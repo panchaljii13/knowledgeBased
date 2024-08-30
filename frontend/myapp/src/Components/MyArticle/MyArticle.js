@@ -5,33 +5,85 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
+import "./MyArticle.css";
 
-const MyArticles = () => {
+const Content = () => {
     const [articleList, setArticleList] = useState([]);
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState('');
     const [showComments, setShowComments] = useState(true);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(false); // Track edit mode
     const [selectedArticle, setSelectedArticle] = useState(null);
     const [updatedTitle, setUpdatedTitle] = useState('');
     const [updatedContent, setUpdatedContent] = useState('');
 
     const navigate = useNavigate();
     const userjsonObj = sessionStorage.getItem('user');
-    const userId = userjsonObj ? JSON.parse(userjsonObj).UserID : null;
+    const userId = JSON.parse(userjsonObj).UserID;
 
-    // Fetch articles and comments
-    useEffect(() => {
+
+    // for delete the article 
+    const deleteArticalFun = async (article) => {
+        console.log('i am article', article);
+        try {
+            const result = Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, keep it'
+            })
+// delete article
+            if ((await result).isConfirmed) {
+                console.log(article.ArticleID);
+                const response = await axios.delete(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_DELETE_ARTICLE}`, { data: {ArticleID: article.ArticleID }});
+                console.log(response);
+                if (response.status === 201) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your operation was successful.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    const newUpdateList = articleList.filter((articleee) => {
+                        return (articleee.ArticleID !== article.ArticleID);
+                    })
+                    setArticleList(newUpdateList);
+                } else if (response.status === 404) {
+                    Swal.fire({
+                        title: 'Alert!',
+                        text: 'something went wrong...',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, proceed',
+                        cancelButtonText: 'No, cancel'
+                    })
+                }
+            }
+
+
+        } catch (error) {
+            console.log('internal server error', error);
+        }
+    }
+
+
+      // Fetch articles
+      useEffect(() => {
         const getArticles = async () => {
             if (!userId) {
                 console.error('UserID is missing');
                 return;
             }
-
+// View article
             try {
-                const response = await axios.post('http://localhost:8080/user/getarticlebyuserid', { UserID: userId });
+                console.log("Fetched userId:",userId);
+                const response = await axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_VIEW_ARTICLE_BY_ID}`, { UserID: userId });
+                
+                console.log("Fetched articles:", response);
                 console.log("Fetched articles:", response.data);
 
                 if (response.data.success) {
@@ -49,133 +101,80 @@ const MyArticles = () => {
         getArticles();
     }, [userId]);
 
-    // Delete an article
-    const deleteArticle = async (article) => {
-        try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, keep it'
-            });
 
-            if (result.isConfirmed) {
-                const response = await axios.delete('http://localhost:8080/article/delete', {
-                    data: { ArticleID: article.ArticleID }
-                });
-
-                if (response.status === 200) {
-                    Swal.fire('Deleted!', 'Your article has been deleted.', 'success');
-                    setArticleList(articleList.filter((item) => item.ArticleID !== article.ArticleID));
-                } else {
-                    Swal.fire('Error!', 'Failed to delete the article.', 'error');
-                }
-            }
-        } catch (error) {
-            console.error('Error deleting article:', error);
-        }
-    };
-
-    // Post a new comment
-    const postComment = async (e, article) => {
+    const postCommentFun = async (e, article) => {
         e.preventDefault();
+        const commentText = newComment;
         try {
-            const response = await axios.post('http://localhost:8080/comments/add', {
+            // add comment api
+
+            const response = await axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_ADD_COMENTS_IN_CONTENT}`, {
                 UserID: userId,
                 ArticleID: article.ArticleID,
-                feedback: newComment
+                feedback: commentText
             });
-
-            if (response.data.success) {
-                setComments((prev) => ({
-                    ...prev,
-                    [article.ArticleID]: [
-                        ...(prev[article.ArticleID] || []),
-                        { text: newComment, likes: 0 }
-                    ]
-                }));
-                setNewComment('');
-            } else {
-                console.error('Failed to post comment:', response.data.error);
-            }
+            setComments(prevComments => ({
+                ...prevComments,
+                [article.ArticleID]: [...(prevComments[article.ArticleID] || []), { text: commentText, likes: 0 }]
+            }));
+            setNewComment('');
         } catch (error) {
             console.error('Error posting comment:', error);
         }
     };
 
-    // Handle comment input change
     const handleCommentChange = (e) => {
         setNewComment(e.target.value);
     };
 
-    // Handle like on comments
-    const handleCommentLike = (articleId, index) => {
-        setComments((prev) => ({
-            ...prev,
-            [articleId]: prev[articleId].map((comment, i) =>
-                i === index ? { ...comment, likes: comment.likes + 1 } : comment
-            )
+    const handleLike = (articleId, index) => {
+        const updatedComments = (comments[articleId] || []).map((comment, i) =>
+            i === index ? { ...comment, likes: comment.likes + 1 } : comment
+        );
+        setComments(prevComments => ({
+            ...prevComments,
+            [articleId]: updatedComments
         }));
     };
 
-    // Toggle comments visibility
     const toggleComments = () => {
         setShowComments(!showComments);
     };
 
-    // Handle like button on article
-    const handleLikeButton = (article) => {
-        setLikes((prev) => prev + (liked ? -1 : 1));
+    const handleLikeButton = () => {
+        if (liked) {
+            setLikes(likes - 1);
+        } else {
+            setLikes(likes + 1);
+        }
         setLiked(!liked);
     };
 
-    // Handle article edit click
     const handleEditClick = (article) => {
         setSelectedArticle(article);
         setUpdatedTitle(article.title);
         setUpdatedContent(article.content);
         setEditMode(true);
+
+        navigate('/updateContent', { state: { article } })
     };
+   const handlebackbutton = ()=>{
+    navigate("/home")
+   }
 
-    // Update article
-    const handleUpdateSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedArticle) return;
+   
 
-        try {
-            const response = await axios.put('http://localhost:8080/article/update', {
-                ArticleID: selectedArticle.ArticleID,
-                title: updatedTitle,
-                content: updatedContent
-            });
-
-            if (response.data.success) {
-                Swal.fire('Updated!', 'Your article has been updated.', 'success');
-                setArticleList(articleList.map(article =>
-                    article.ArticleID === selectedArticle.ArticleID
-                        ? { ...article, title: updatedTitle, content: updatedContent }
-                        : article
-                ));
-                setEditMode(false);
-            } else {
-                console.error('Failed to update article:', response.data.error);
-            }
-        } catch (error) {
-            console.error('Error updating article:', error);
-        }
-    };
-
-    // Render
     return (
         <div id="contentbg">
-            <h2>hii</h2>
             <div className="container-xxl py-5">
+            <button className="backButtons" onClick={handlebackbutton}>Back</button>
+
                 <div className="container">
+                    
                     <div className="row g-5">
-                        <div className="col-12 mb-4">
-                            <div className="row">
+                        {articleList.map((article, index) => (
+                            <div key={index} className="col-12 mb-4">
+                                <div className="row">
                                 <img
                                     src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
                                     className="profileimg"
@@ -183,83 +182,121 @@ const MyArticles = () => {
                                     alt="Profile"
                                     loading="lazy"
                                 />
-                                <h1>i am user</h1>
-                                <div className="col-md-6 col-12 mb-4">
-                                    <img
-                                        className="img-fluid rounded w-100"
-                                        src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                                        alt="Default Image"
-                                    />
-                                </div>
-                                <div className="col-md-6 col-12">
+                                    <h1>
+                                    {/* {articleList.user ? articleList.user : 'Unknown Category'} */}
+
+                                    </h1>
+                                    {/* Image section */}
+                                    
+                                    <div className="col-md-6 col-12 mb-4">
+                  {Array.isArray(article.AddImages) && article.AddImages.length > 0 ? (
+                    article.AddImages.map((imageUrl, imageIndex) => (
+                      <img
+                        key={imageIndex}
+                        className="img-fluid rounded w-100"
+                        src={`http://localhost:8080/${imageUrl}`} // Adjust URL as needed
+                        alt={`Article Image ${imageIndex + 1}`}
+                      />
+                    ))
+                  ) : (
+                    <img
+                      className="img-fluid rounded w-100"
+                      src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                      alt="Default Image"
+                    />
+                  )}
+                </div>
+                                    {/* Content section */}
+                                  <div className="col-md-6 col-12">
                                     <div className="d-flex flex-column">
-                                        <p className="d-inline-block py-1 px-1" id="Categoryfont">Category</p>
-                                        <h1 className="mb-4" id="Category">
-                                            {articleList.category ? articleList.category.categoryname : 'Unknown Category'}
-                                        </h1>
-                                        <h2>{articleList.title}</h2>
-                                        <p id="Article">{articleList.content}</p>
-                                        <div className="d-flex align-items-center mb-4">
-                                        </div>
-                                        {/* <form className="mb-4" onSubmit={(e) => postComment(e, article)}>
-                                            <div className="form-group">
-                                                <textarea
-                                                    className="form-control"
-                                                    rows="3"
-                                                    value={newComment}
-                                                    onChange={handleCommentChange}
-                                                    placeholder="Write a comment..."
-                                                    required
-                                                />
+                                    <p className="d-inline-block py-1 px-1" id="Categoryfont">Category</p>
+                                    <h1 className="mb-4" id="Category">
+                                        {article.category ? article.category.categoryname : 'Unknown Category'}
+                                    </h1> {/* Display category name */}
+                                    <h2>{article.title}</h2>
+                                    <p id="Article">{article.content}</p>
+                                            <div className="d-flex align-items-center mb-4">
+                                                {/* Like button */}
+                                                <button
+                                                    className={`btn ${liked ? 'btn-primary' : 'btn-outline-primary'} btn-sm me-2`}
+                                                    onClick={handleLikeButton}
+                                                >
+                                                    <i className={`fas fa-thumbs-up me-2 ${liked ? 'text-white' : 'text-primary'}`}></i>
+                                                    {likes}
+                                                </button>
+                                                {/* Edit button */}
+                                                <button
+                                                    className="btn btn-outline-secondary btn-sm"
+                                                    onClick={() => handleEditClick(article)}
+                                                >
+                                                    <i className="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button className="btn btn-outline-danger" onClick={() => { deleteArticalFun(article) }}> delete</button>
                                             </div>
-                                            <button type="submit" className="btn btn-primary mt-2">Post Comment</button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-secondary mt-2 ms-2"
-                                                onClick={toggleComments}
-                                            >
-                                                {showComments ? 'Hide Comments' : 'Show Comments'}
-                                            </button>
-                                        </form> */}
-                                        {/* {showComments && (
-                                            <div className="list-group">
-                                                {comments[article.ArticleID] && comments[article.ArticleID].length > 0 ? (
-                                                    comments[article.ArticleID].map((comment, index) => (
-                                                        <div key={index} className="list-group-item d-flex justify-content-between align-items-start">
-                                                            <div className="ms-2 me-auto">
-                                                                <div className="fw-bold">User</div>
-                                                                {comment.text}
+
+                                            {/* Comment Form */}
+                                            <form className="mb-4" onSubmit={(e) => postCommentFun(e, article)}>
+                                                <div className="form-group">
+                                                    <textarea
+                                                        className="form-control"
+                                                        rows="3"
+                                                        value={newComment}
+                                                        onChange={handleCommentChange}
+                                                        placeholder="Write a comment..."
+                                                        required
+                                                    />
+                                                </div>
+                                                <button type="submit" className="btn btn-primary mt-2">Post Comment</button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-secondary mt-2 ms-2"
+                                                    onClick={toggleComments}
+                                                >
+                                                    {showComments ? 'Hide Comments' : 'Show Comments'}
+                                                </button>
+                                            </form>
+
+                                            {/* Comments List */}
+                                            {showComments && (
+                                                <div className="list-group">
+                                                    {comments[article.ArticleID] && comments[article.ArticleID].length > 0 ? (
+                                                        comments[article.ArticleID].map((comment, index) => (
+                                                            <div key={index} className="list-group-item d-flex justify-content-between align-items-start">
+                                                                <div className="ms-2 me-auto">
+                                                                    <div className="fw-bold">User</div>
+                                                                    {comment.text}
+                                                                </div>
+                                                                <button
+                                                                    className="btn btn-outline-primary btn-sm"
+                                                                    onClick={() => handleLike(article.ArticleID, index)}
+                                                                >
+                                                                    <i className="fas fa-thumbs-up"></i> {comment.likes}
+                                                                </button>
                                                             </div>
-                                                            <button
-                                                                className="btn btn-outline-primary btn-sm"
-                                                                onClick={() => handleCommentLike(article.ArticleID, index)}
-                                                            >
-                                                                <i className="fas fa-thumbs-up"></i> {comment.likes}
-                                                            </button>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <p className="text-muted">No comments yet.</p>
-                                                )}
-                                            </div>
-                                        )} */}
+                                                        ))
+                                                    ) : (
+                                                        <p className="text-muted">No comments yet.</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Update Article Modal
-            {editMode && selectedArticle && (
+            {/* Update Article Modal */}
+            {/* {editMode && selectedArticle && (
                 <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} aria-modal="true">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Edit Article</h5>
                                 <button type="button" className="btn-close" onClick={() => setEditMode(false)}></button>
-                            </div>
+                            </div>+
                             <div className="modal-body">
                                 <form onSubmit={handleUpdateSubmit}>
                                     <div className="mb-3">
@@ -295,4 +332,4 @@ const MyArticles = () => {
     );
 };
 
-export default MyArticles;
+export default Content;

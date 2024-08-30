@@ -33,16 +33,6 @@ const Header = () => {
                 
         navigate("/searchdata");
 
-        // try {
-        //     const response = await axios.get('http://localhost:8080/search/searchall', {
-        //         params: { query: searchInput }
-        //     });
-        //     setSearchResults(response.data.data);
-        //     navigate("/searchdata");
-        // } catch (err) {
-        //     console.error('Error searching:', err);
-        // }
-        
     };
     const ShowMyArticle = () =>{
         navigate("/myarticle")
@@ -69,7 +59,7 @@ const Header = () => {
                     </a>
                     <ul className="nav flex-column">
                         {/* Navigation Items */}
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <a className="nav-link" href="#">News</a>
                         </li>
                         <li className="nav-item">
@@ -80,9 +70,9 @@ const Header = () => {
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="#">Health</a>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={ShowMyArticle}>My Article</a>
+                            <a className="nav-link" href="#" id="addarticle" onClick={ShowMyArticle}>My Article</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="#" id="addarticle" onClick={addarticleandfile}>Add Your Article</a>
@@ -93,34 +83,14 @@ const Header = () => {
                     </ul>
 
                     <div className="d-flex flex-column align-items-center mt-4">
-                        {/* <input
-                            type="text"
-                            className="form-control mb-3"
-                            placeholder="Search"
-                            value={searchInput}
-                            onChange={handleSearchChange}
-                        /> */}
+                       
                         <button
                             className="btn btn-outline-primary mb-2"
                             onClick={handleSearch}
                         >
                             <i className="fas fa-search">    Search   </i>
                         </button>
-                        {/* Handle search results display */}
-                        {/* <div className="search-results mt-3">
-                            {searchResults.length > 0 ? (
-                                <ul className="list-group">
-                                    {searchResults.map((result, index) => (
-                                        <li key={index} className="list-group-item">
-                                            {result.title}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>No results found</p>
-                            )}
-                        </div> */}
-                        {/* Other components */}
+                      
                     </div>
                 </div>
             </nav>

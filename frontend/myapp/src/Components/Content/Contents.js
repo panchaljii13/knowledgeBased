@@ -4,8 +4,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import "./Contents.css";
-import { useNavigate } from 'react-router-dom';
-import Swal from "sweetalert2";
+// import { useNavigate } from 'react-router-dom';
+// import Swal from "sweetalert2";
 
 const Content = () => {
     const [articleList, setArticleList] = useState([]);
@@ -14,68 +14,21 @@ const Content = () => {
     const [showComments, setShowComments] = useState(true);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
-    const [editMode, setEditMode] = useState(false); // Track edit mode
-    const [selectedArticle, setSelectedArticle] = useState(null);
-    const [updatedTitle, setUpdatedTitle] = useState('');
-    const [updatedContent, setUpdatedContent] = useState('');
+    // const [editMode, setEditMode] = useState(false); // Track edit mode
+    // const [selectedArticle, setSelectedArticle] = useState(null);
+    // const [updatedTitle, setUpdatedTitle] = useState('');
+    // const [updatedContent, setUpdatedContent] = useState('');
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const userjsonObj = sessionStorage.getItem('user');
     const userId = JSON.parse(userjsonObj).UserID;
 
+    // Fetch All articles 
 
-    // for delete the article 
-    const deleteArticalFun = async (article) => {
-        console.log('i am article', article);
-        try {
-            const result = Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, keep it'
-            })
-
-            if ((await result).isConfirmed) {
-                console.log(article.ArticleID);
-                const response = await axios.delete('http://localhost:8080/article/delete', { data: {ArticleID: article.ArticleID }});
-                console.log(response);
-                if (response.status === 201) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Your operation was successful.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
-                    const newUpdateList = articleList.filter((articleee) => {
-                        return (articleee.ArticleID !== article.ArticleID);
-                    })
-                    setArticleList(newUpdateList);
-                } else if (response.status === 404) {
-                    Swal.fire({
-                        title: 'Alert!',
-                        text: 'something went wrong...',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, proceed',
-                        cancelButtonText: 'No, cancel'
-                    })
-                }
-            }
-
-
-        } catch (error) {
-            console.log('internal server error', error);
-        }
-    }
-
-
-    // Fetch articles and comments
     useEffect(() => {
         const getArticles = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/article/view');
+                const response = await axios.get(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_FETCH_ALL_ARTICLE}`)
                 setArticleList(response.data.data);
                 console.log("response----------------",response.data.data)
             } catch (error) {
@@ -87,11 +40,14 @@ const Content = () => {
         getArticles();
     }, []);
 
+    // Commentss addd
+
     const postCommentFun = async (e, article) => {
         e.preventDefault();
         const commentText = newComment;
+          // Commentss addd api
         try {
-            const response = await axios.post('http://localhost:8080/comments/add', {
+            const response = await axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_ADD_COMENTS_IN_CONTENT}`, {
                 UserID: userId,
                 ArticleID: article.ArticleID,
                 feedback: commentText
@@ -105,11 +61,11 @@ const Content = () => {
             console.error('Error posting comment:', error);
         }
     };
-
+// hendale comments
     const handleCommentChange = (e) => {
         setNewComment(e.target.value);
     };
-
+// liked
     const handleLike = (articleId, index) => {
         const updatedComments = (comments[articleId] || []).map((comment, i) =>
             i === index ? { ...comment, likes: comment.likes + 1 } : comment
@@ -119,11 +75,11 @@ const Content = () => {
             [articleId]: updatedComments
         }));
     };
-
+// show comment
     const toggleComments = () => {
         setShowComments(!showComments);
     };
-
+// Like hendal
     const handleLikeButton = () => {
         if (liked) {
             setLikes(likes - 1);
@@ -133,25 +89,18 @@ const Content = () => {
         setLiked(!liked);
     };
 
-    const handleEditClick = (article) => {
-        setSelectedArticle(article);
-        setUpdatedTitle(article.title);
-        setUpdatedContent(article.content);
-        setEditMode(true);
-
-        navigate('/updateContent', { state: { article } })
-    };
-
+   
    
 
     return (
+        
         <div id="contentbg">
-            <div className="container-xxl py-5">
-                <div className="container">
-                    <div className="row g-5">
+            <div className="container-xxl py-5"  >
+                <div className="container" >
+                    <div className="row g-5" >
                         {articleList.map((article, index) => (
                             <div key={index} className="col-12 mb-4">
-                                <div className="row">
+                                <div className="row" >
                                 <img
                                     src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
                                     className="profileimg"
@@ -165,10 +114,10 @@ const Content = () => {
                                     </h1>
                                     {/* Image section */}
                                     
-                                    <div className="col-md-6 col-12 mb-4">
+                                    <div className="col-md-6 col-12 mb-4" >
                   {Array.isArray(article.AddImages) && article.AddImages.length > 0 ? (
                     article.AddImages.map((imageUrl, imageIndex) => (
-                      <img
+                      <img 
                         key={imageIndex}
                         className="img-fluid rounded w-100"
                         src={`http://localhost:8080/${imageUrl}`} // Adjust URL as needed
@@ -202,13 +151,13 @@ const Content = () => {
                                                     {likes}
                                                 </button>
                                                 {/* Edit button */}
-                                                <button
+                                                {/* <button
                                                     className="btn btn-outline-secondary btn-sm"
                                                     onClick={() => handleEditClick(article)}
                                                 >
                                                     <i className="fas fa-edit"></i> Edit
-                                                </button>
-                                                <button className="btn btn-outline-danger" onClick={() => { deleteArticalFun(article) }}> delete</button>
+                                                </button> */}
+                                                {/* <button className="btn btn-outline-danger" onClick={() => { deleteArticalFun(article) }}> delete</button> */}
                                             </div>
 
                                             {/* Comment Form */}
@@ -307,6 +256,8 @@ const Content = () => {
             )} */}
         </div>
     );
+    
 };
 
 export default Content;
+

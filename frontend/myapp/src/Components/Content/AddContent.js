@@ -43,7 +43,7 @@ const Content = () => {
     const userJsonObj = sessionStorage.getItem('user');
     const UserID = JSON.parse(userJsonObj).UserID;   
 
-    // Handle form submission
+    // Handle form submission ADD ARTICLE
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (newArticle.title && newArticle.content && newArticle.AddImages && newArticle.CategoryID) {
@@ -60,9 +60,10 @@ console.log("newArticle----------------------------------------------",newArticl
             formData.append('UserID', UserID)
 
             console.log(formData);
+    // Handle form submission ADD ARTICLE API
 
             try {
-                const response = await axios.post('http://localhost:8080/article/add', formData, {
+                const response = await axios.post(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_ADD_CONTENT}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -74,8 +75,9 @@ console.log("newArticle----------------------------------------------",newArticl
                         text: 'Article added successfully!',
                         icon: 'success',
                         confirmButtonText: 'OK'
+
                     });
-                    navigate("/home");
+                    navigate("/myarticle");
                 }else if(response.status === 404){
                     Swal.fire({
                         title: 'Warning!',
@@ -102,9 +104,17 @@ console.log("newArticle----------------------------------------------",newArticl
     const backtocontent = () => {
         navigate("/home");
     };
+    const handlebackbutton =()=>{
+        navigate("/home")
+    }
 
     return (
-        <div className="container-xxl py-5">
+       <div>
+        <div>
+        <button className="backButtons" onClick={handlebackbutton}>Back</button>
+
+        </div>
+         <div className="container-xxl py-5">
             <div className="container">
                 <div className="row g-5">
                     <div className="col-lg-6">
@@ -209,6 +219,7 @@ console.log("newArticle----------------------------------------------",newArticl
                 </div>
             </div>
         </div>
+       </div>
     );
 };
 

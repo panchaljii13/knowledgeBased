@@ -8,17 +8,22 @@ import CommentsRout from "./routers/CommentRout.js";
 import SearchRout from "./routers/SerarchRout.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 import { dirname } from 'path';
+import "./modle/Index.module.js";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // import { body, validationResult } from 'express-validator';
-import "./modle/Index.module.js";
+
 
 const app = express();
 
 var corOption = {
-    origin: 'http://localhost:3000'
+    origin:process.env.CORS_OPRETION_ORIGIN
 }
 
 app.use(cors(corOption));
@@ -38,7 +43,7 @@ app.use("/search",SearchRout);
 app.get('/', (req, res) => {
     res.send("heloo world......!");
 });
-const port = 8080;
+const port = process.env.PORT_NUMBER
 app.listen(port, () => {
     console.log("server start...");
 });

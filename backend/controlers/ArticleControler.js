@@ -139,3 +139,45 @@ export const viewallArticle = async (req, res) => {
       res.status(500).json({ error: 'Error retrieving articles. Please try again.' });
     }
   };
+
+  export const viewArticlebyId = async (req, res) => {
+    const UserID  = req.body.UserID; // Get UserID from URL parameters
+    console.log(req.body)
+    try {
+        // Assuming Article has a foreign key reference to User and User has a foreign key reference to Category
+        
+        const article = await Article.findAll({
+            where: { UserID }, // Find Article by UserID
+            include: [
+                {
+                    model: User,
+                    as: 'user', // Ensure this alias matches your association
+                }
+            ],
+            include: [
+                {
+                    model: Category,
+                    as: 'category', // Ensure this alias matches your association
+                }
+            ],
+          //   include: [
+          //     {
+          //         model: Article,
+          //         as: 'article', // Ensure this alias matches your association
+          //     }
+          // ],
+        });
+
+        if (!article) {
+            return res.status(404).json({ success: false, error: 'Article not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: article
+        });
+    } catch (error) {
+        console.error('Error retrieving article:', error);
+        res.status(500).json({ success: false, error: 'An error occurred while retrieving the article. Please try again.' });
+    }
+};

@@ -55,7 +55,7 @@ const UpdateContent = () => {
 
     
             try {
-                const response = await axios.put('http://localhost:8080/article/update', {
+                const response = await axios.put(`${process.env.REACT_APP_LOCALHOST_URL}${process.env.REACT_APP_ARTICLE_UPDATE}`, {
                     title: newArticle.title,
                     content: newArticle.content,
                     ArticleID: newArticle.ArticleID,
@@ -73,7 +73,7 @@ const UpdateContent = () => {
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
-                    navigate("/home");
+                    navigate("/myarticle");
                 }
             } catch (error) {
                 Swal.fire({
