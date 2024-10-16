@@ -58,19 +58,7 @@ const Header = () => {
                         />
                     </a>
                     <ul className="nav flex-column">
-                        {/* Navigation Items */}
-                        {/* <li className="nav-item">
-                            <a className="nav-link" href="#">News</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Education</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Technical</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Health</a>
-                        </li> */}
+                       
                         <li className="nav-item">
                             <a className="nav-link" href="#" id="addarticle" onClick={ShowMyArticle}>My Article</a>
                         </li>
